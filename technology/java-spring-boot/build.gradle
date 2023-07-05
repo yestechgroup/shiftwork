@@ -1,0 +1,48 @@
+plugins {
+    id "org.springframework.boot" version "3.0.6"
+    id "io.spring.dependency-management" version "1.0.11.RELEASE"
+    id "java"
+}
+
+def timefoldVersion = "1.0.0"
+def assertjVersion = "3.24.2"
+
+group = "org.acme"
+archivesBaseName = "timefold-solver-spring-boot-school-timetabling-quickstart"
+version = "1.0-SNAPSHOT"
+sourceCompatibility = "17"
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation "org.springframework.boot:spring-boot-starter-web"
+    implementation "org.springframework.boot:spring-boot-starter-data-rest"
+    implementation "org.springframework.boot:spring-boot-starter-data-jpa"
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation "io.rest-assured:rest-assured"
+    testImplementation "org.awaitility:awaitility"
+
+    implementation platform("ai.timefold.solver:timefold-solver-bom:${timefoldVersion}")
+    implementation "ai.timefold.solver:timefold-solver-spring-boot-starter"
+    testImplementation("ai.timefold.solver:timefold-solver-test")
+    testImplementation("ai.timefold.solver:timefold-solver-benchmark")
+    testImplementation "org.assertj:assertj-core:${assertjVersion}"
+
+    runtimeOnly "com.h2database:h2"
+    runtimeOnly "org.webjars:webjars-locator:0.37"
+    runtimeOnly "org.webjars:bootstrap:5.2.3"
+    runtimeOnly "org.webjars:jquery:3.6.4"
+    runtimeOnly "org.webjars:font-awesome:5.11.2"
+    runtimeOnly "org.webjars.npm:js-joda:1.11.0"
+}
+
+test {
+    useJUnitPlatform()
+    // Log the test execution results.
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}

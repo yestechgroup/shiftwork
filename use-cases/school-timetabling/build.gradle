@@ -1,0 +1,65 @@
+plugins {
+    id "java"
+    id "io.quarkus" version "3.0.3.Final"
+}
+
+def quarkusVersion = "3.0.3.Final"
+def timefoldVersion = "1.0.0"
+def assertjVersion = "3.24.2"
+
+group = "org.acme"
+version = "1.0-SNAPSHOT"
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation enforcedPlatform("io.quarkus:quarkus-bom:${quarkusVersion}")
+    implementation "io.quarkus:quarkus-resteasy"
+    implementation "io.quarkus:quarkus-resteasy-jackson"
+    implementation "io.quarkus:quarkus-smallrye-openapi"
+    implementation "io.quarkus:quarkus-webjars-locator"
+    testImplementation "io.quarkus:quarkus-junit5"
+    testImplementation "io.rest-assured:rest-assured"
+    testImplementation "org.awaitility:awaitility"
+
+    implementation platform("ai.timefold.solver:timefold-solver-bom:${timefoldVersion}")
+    implementation "ai.timefold.solver:timefold-solver-quarkus"
+    implementation "ai.timefold.solver:timefold-solver-quarkus-jackson"
+    testImplementation "ai.timefold.solver:timefold-solver-test"
+    testImplementation "org.assertj:assertj-core:${assertjVersion}"
+
+    runtimeOnly "ai.timefold.solver:timefold-solver-webui"
+    runtimeOnly "org.webjars:bootstrap:5.2.3"
+    runtimeOnly "org.webjars:jquery:3.6.4"
+    runtimeOnly "org.webjars:font-awesome:5.11.2"
+    runtimeOnly "org.webjars.npm:js-joda:1.11.0"
+
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+compileJava {
+    options.encoding = "UTF-8"
+    options.compilerArgs << "-parameters"
+}
+
+compileTestJava {
+    options.encoding = "UTF-8"
+}
+
+test {
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+    // Gradle needs native tests in src/native-test/java, but maven needs them in src/test/java instead.
+    // Maven first, so we skip them in Gradle unfortunately.
+    exclude "**/**IT.class"
+    // Log the test execution results.
+    testLogging {
+        events "passed", "skipped", "failed"
+    }
+}
